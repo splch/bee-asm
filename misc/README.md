@@ -53,14 +53,14 @@ label:
 
 ## Converting to Regex
 
-1. Match and remove comments: `;.*`
-2. Match and remove labels: `^.*:`
-3. Match and remove operations: `^\s*\w+`
-4. Match and remove operands: `\w+`
+1. Labels: `.*(?=:)`
+2. Operations: `(?<=:\s*|^\s+)\S+`
+3. Operands: `(?<!;\s*)((?<=(:*\s+\S+\s+))[^\s,;]+)`
+4. Comments: `(?<=;).*`
 
 ```js
-let comments = new RegExp(/;.*/g);
-let labels = new RegExp(/^.*:/g);
-let operations = new RegExp(/^\s*\w+/g);
-let operands = new RegExp(/\w+/g);
+let labels = new RegExp(/.*(?=:)/g);
+let operations = new RegExp(/(?<=:\s*|^\s+)\S+/g);
+let operands = new RegExp(/(?<!;\s*)((?<=(:*\s+\S+\s+))[^\s,;]+)/g);
+let comments = new RegExp(/(?<=;).*/g);
 ```
