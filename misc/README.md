@@ -45,7 +45,7 @@ Each line needs to be parsed in the following format:
 {
   label: '',
   operation: '',
-  operand: [],
+  operands: [],
   comment: ''
 }
 ```
@@ -55,7 +55,7 @@ Each line needs to be parsed in the following format:
 1. The label is the start of the line to the first space
 2. The operation is the first word after the first space
 3. The operands are the number of words specified by the operation after the operation
-4. Ignore the comments
+4. The comments are everything following the final operand
 
 ## Converting to JavaScript
 
@@ -65,13 +65,14 @@ let instructions = {
   operation1: 1,
   operation2: 2,
 };
+```
 
+```js
 function parse(line) {
   let label_flag = true;
   let indent_flag = false;
   let operation_flag = false;
   let operand_flag = false;
-  let comment_flag = false;
 
   let label = "";
   let operation = "";
@@ -87,40 +88,23 @@ function parse(line) {
         indent_flag = false;
         operation_flag = true;
         operation += char;
-      } else if (operand_flag && operands.length < instructions[operation]) {
+      } else if (operand_flag) {
         operand += char;
-        if (i === line.length - 1) {
-          operands.push(operand);
-          operand = "";
-        }
-      } else {
-        comment += char;
-      }
+        if (i === line.length - 1) operands.push(operand);
+      } else comment += char;
     } else {
       if (label_flag) {
         label_flag = false;
-        if (i === 0) {
-          indent_flag = true;
-        } else {
-          operation_flag = true;
-        }
+        if (i === 0) indent_flag = true;
+        else operation_flag = true;
       } else if (operation_flag) {
         operation_flag = false;
-        if (instructions[operation] === 0) {
-          comment_flag = true;
-        } else {
-          operand_flag = true;
-        }
+        if (instructions[operation] > 0) operand_flag = true;
       } else if (operand_flag) {
         operands.push(operand);
         operand = "";
-        if (operands.length === instructions[operation]) {
-          operand_flag = false;
-          comment_flag = true;
-        }
-      } else if (comment_flag) {
-        comment += char;
-      }
+        if (operands.length === instructions[operation]) operand_flag = false;
+      } else comment += char;
     }
   }
 
