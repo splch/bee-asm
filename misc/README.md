@@ -57,3 +57,10 @@ label:
 2. Match and remove labels: `^.*:`
 3. Match and remove operations: `^\s*\w+`
 4. Match and remove operands: `\w+`
+
+```js
+let comments = new RegExp(/;.*/g);
+let labels = new RegExp(/^.*:/g);
+let operations = new RegExp(/^\s*\w+/g);
+let operands = new RegExp(/\w+/g);
+```
