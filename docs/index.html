@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Bee Assembly 🐝</title>
-    <link href="simple.min.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <h1>Bee Assembly 🐝</h1>
-    <code id="output"></code>
-    <input id="source" style="width: 100%;"></input>
-    <script src="script.js"></script>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Bee Assembly 🐝</title>
+  <link href="simple.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <h1>Bee Assembly 🐝</h1>
+  <code id="output"></code>
+  <div style="align-items: stretch; display: flex">
+    <textarea id="source" style="height: 100%; resize: none; width: 100%" rows="1"></textarea>
+    <button id="run" style="height: 100%; margin: 0">Run</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+
 </html>
