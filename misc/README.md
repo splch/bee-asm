@@ -25,21 +25,21 @@
 # Syntax
 
 ```asm
-label: operation operand ; comment
-label: operation operand, operand ; comment
+label: operation operand ; comment, : comment
+label: operation operand, operand ; comment, : comment
 label: operation operand
 label: operation operand, operand
-label: operation ; comment
+label: operation ; comment, : comment
 label: operation
 label:
-; comment
-;comment
-    operation operand ; comment
-    operation operand, operand ; comment
+; comment, : comment
+;comment, : comment
+    operation operand ; comment, : comment
+    operation operand, operand ; comment, : comment
     operation operand
     operation operand, operand
-    operation ; comment
-    operation ;comment
+    operation ; comment, : comment
+    operation ;comment, : comment
     operation
 
 ```
@@ -53,7 +53,7 @@ label:
 
 ## Converting to Regex
 
-1. Labels: `^.*(?=:)`
+1. Labels: `^\S*(?=:)`
 2. Operations: `(?<!;.*)((?<=:\s*|^\s+)\S+)`
 3. Operands: `(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)`
 4. Comments: `(?<=;).*`

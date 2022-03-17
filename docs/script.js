@@ -1,5 +1,5 @@
 // Lexer
-let label_regex = new RegExp(/^.*(?=:)/g);
+let label_regex = new RegExp(/^\S*(?=:)/g);
 let operation_regex = new RegExp(/(?<!;.*)((?<=:\s*|^\s+)\S+)/g);
 let operand_regex = new RegExp(/(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)/g);
 let comment_regex = new RegExp(/(?<=;).*/g);
