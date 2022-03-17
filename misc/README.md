@@ -58,4 +58,4 @@ label:
 3. Operands: `(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)`
 4. Comments: `(?<=;).*`
 
-https://github.com/splch/bee-asm/blob/master/docs/script.js#L2-L5
+https://github.com/splch/bee-asm/blob/43d57477c079a59df4978ad62241201cea86bb84/docs/script.js#L2-L5
