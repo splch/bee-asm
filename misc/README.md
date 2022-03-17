@@ -47,15 +47,21 @@ label:
 ## The grammar from this example is:
 
 1. The label is the start of the line to the first space
+
 2. The operation is the first word after the first space
+
 3. The operands are the number of words specified by the operation after the operation
+
 4. The comments are everything following the final operand
 
 ## Converting to Regex
 
 1. Labels: `^\S*(?=:)`
+
 2. Operations: `(?<!;.*)((?<=:\s*|^\s+)\S+)`
+
 3. Operands: `(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)`
+
 4. Comments: `(?<=;).*`
 
-https://github.com/splch/bee-asm/blob/43d57477c079a59df4978ad62241201cea86bb84/docs/script.js#L2-L5
+https://github.com/splch/bee-asm/blob/6f5cdcddcefe4743a0b6de1bdeaa120a49e85f11/docs/script.js#L2-L5
