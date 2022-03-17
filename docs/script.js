@@ -1,8 +1,8 @@
 // Lexer
-const label_regex = new RegExp(/.*(?=:)/g);
-const operation_regex = new RegExp(/(?<=:\s*|^\s+)\S+/g);
-const operand_regex = new RegExp(/(?<!;\s*)((?<=(:*\s+\S+\s+))[^\s,;]+)/g);
-const comment_regex = new RegExp(/(?<=;).*/g);
+let label_regex = new RegExp(/^.*(?=:)/g);
+let operation_regex = new RegExp(/(?<!;.*)((?<=:\s*|^\s+)\S+)/g);
+let operand_regex = new RegExp(/(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)/g);
+let comment_regex = new RegExp(/(?<=;).*/g);
 
 const parser = line => {
     const label = line.match(label_regex)?.at(0);

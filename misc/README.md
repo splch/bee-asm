@@ -53,14 +53,9 @@ label:
 
 ## Converting to Regex
 
-1. Labels: `.*(?=:)`
-2. Operations: `(?<=:\s*|^\s+)\S+`
-3. Operands: `(?<!;\s*)((?<=(:*\s+\S+\s+))[^\s,;]+)`
+1. Labels: `^.*(?=:)`
+2. Operations: `(?<!;.*)((?<=:\s*|^\s+)\S+)`
+3. Operands: `(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)`
 4. Comments: `(?<=;).*`
 
-```js
-let labels = new RegExp(/.*(?=:)/g);
-let operations = new RegExp(/(?<=:\s*|^\s+)\S+/g);
-let operands = new RegExp(/(?<!;\s*)((?<=(:*\s+\S+\s+))[^\s,;]+)/g);
-let comments = new RegExp(/(?<=;).*/g);
-```
+docs/script.js#L2-L5
