@@ -40,7 +40,7 @@ function appendCode(parsed) {
     label_span.style.color = "#0000b5";
     operation_span.style.color = "#b50000";
     operands_span.style.color = "#005500";
-    comment_span.style.color = "gray";
+    comment_span.style.color = "#808080";
 
     if (parsed.label)
         document.getElementById("output").appendChild(label_span);
