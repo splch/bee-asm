@@ -9,13 +9,22 @@
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐝</text></svg>">
   <link href="simple.min.css" rel="stylesheet" type="text/css" />
   <script src="script.js" defer></script>
+  <style>
+    :root {
+      --label: #6f6fff;
+      --operation: #ff0000;
+      --operand: #009700;
+      --comment: #818181;
+    }
+  </style>
 </head>
 
 <body>
   <h1>Bee Assembly</h1>
-  <code id="output"></code>
+  <pre id="output"></pre>
   <div style="align-items: stretch; display: flex">
-    <textarea id="source" style="height: 100%; resize: none; width: 100%" rows="1"></textarea>
+    <textarea id="source" style="height: 100%; resize: none; width: 100%" spellcheck="false" autocapitalize="off"
+      autocorrect="off" autocomplete="off" autofocus rows="1"></textarea>
     <button id="run" style="height: 100%; margin: 0">Run</button>
   </div>
 </body>

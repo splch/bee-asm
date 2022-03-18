@@ -2,19 +2,20 @@
 const source = document.getElementById("source");
 const run_btn = document.getElementById("run");
 let state = {};
+const tab = 4;
 
 // Lexer
-let label_regex = new RegExp(/^\w*(?=:)/g);
-let operation_regex = new RegExp(/(?<!;.*)((?<=:\s*|^\s+)\w+)/g);
-let operand_regex = new RegExp(/(?<!;.*)((?<=([^\s:]+\s+|,))\w+)/g);
-let comment_regex = new RegExp(/(?<=;).*/g);
+let label_regex = new RegExp(/^\w+(?=:)/g);
+let operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)\w+/g);
+let operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))\w+/g);
+let comment_regex = new RegExp(/;.*/g);
 
 // Parser
 function parser(line) {
     run_btn.innerText = "Parse";
 
     const label = line.match(label_regex)?.at(0);
-    const operation = line.match(operation_regex)?.at(0);
+    const operation = line.match(operation_regex)?.at(0).toLowerCase();
     const operands = line.match(operand_regex);
     const comment = line.match(comment_regex)?.at(0).trim();
 
@@ -31,13 +32,13 @@ function interpreter(parsed) {
     run_btn.innerText = "Interpret";
 }
 
-function appendCode(parsed) {
-    const label = parsed.label + ": ";
-    const operation = parsed.operation + " ";
-    const operands = parsed.operands?.join(", ");
-    const comment = " ; " + parsed.comment;
+function appendCode(parsed, line) {
+    const label = parsed.label + ":";
+    const operation = " ".repeat(tab) + parsed.operation;
+    const operands = " " + parsed.operands?.join(", ");
+    const comment = " ".repeat(tab) + parsed.comment;
 
-    const line = document.createElement("div");
+    const div = document.createElement("div");
     const label_span = document.createElement("span");
     const operation_span = document.createElement("span");
     const operands_span = document.createElement("span");
@@ -48,21 +49,29 @@ function appendCode(parsed) {
     operands_span.innerText = operands;
     comment_span.innerText = comment;
 
-    label_span.style.color = "#5f5fff";
-    operation_span.style.color = "#ec0000";
-    operands_span.style.color = "#008900";
-    comment_span.style.color = "#757575";
+    // Good on light (#f5f7ff) and dark (#2b2b2b)
+    label_span.style.color = "var(--label)";
+    operation_span.style.color = "var(--operation)";
+    operands_span.style.color = "var(--operand)";
+    comment_span.style.color = "var(--comment)";
 
     if (parsed.label)
-        line.appendChild(label_span);
+        div.appendChild(label_span);
     if (parsed.operation)
-        line.appendChild(operation_span);
+        div.appendChild(operation_span);
     if (parsed.operands)
-        line.appendChild(operands_span);
+        div.appendChild(operands_span);
     if (parsed.comment)
-        line.appendChild(comment_span);
-    if (line.hasChildNodes())
-        document.getElementById("output").appendChild(line);
+        div.appendChild(comment_span);
+    if (div.hasChildNodes())
+        document.getElementById("output").appendChild(div);
+    else if (line !== "")
+        appendCode({
+            label: "",
+            operation: "",
+            operand: "",
+            comment: "; Error parsing: " + line
+        }, "");
 }
 
 function reset() {
@@ -81,10 +90,10 @@ function insertTab() {
 
     // Set textarea value to before+tab+after
     source.value = source.value.substring(0, start) +
-        "\t" + source.value.substring(end);
+        " ".repeat(tab) + source.value.substring(end);
 
     // Move to correct position
-    source.selectionStart = source.selectionEnd = start + 1;
+    source.selectionStart = source.selectionEnd = start + tab;
 }
 
 function run(lines) {
@@ -96,7 +105,7 @@ function run(lines) {
                 // Parse lines
                 parsed_lines.push(parser(line));
                 // Display lines in output
-                appendCode(parsed_lines?.at(parsed_lines.length - 1));
+                appendCode(parsed_lines?.at(parsed_lines.length - 1), line);
             }
             for (const parsed of parsed_lines) {
                 // Interpret lines
@@ -115,18 +124,16 @@ source.onkeydown = e => {
         e.preventDefault();
         run(e.target.value).then(reset);
     }
-    if (e.key === "Tab") {
+    else if (e.key === "Tab") {
         // Prevent focus from moving to next element
         e.preventDefault();
         insertTab();
     }
-    if (e.key === "Enter")
-        // Expand textarea on enter
-        e.target.rows++;
-    if (e.key === "Backspace")
-        // Shrink textarea on backspace
-        if (e.target.rows > 1)
-            e.target.rows--;
+}
+
+source.onkeyup = e => {
+    // Update textarea height
+    e.target.rows = e.target.value.split("\n").length;
 }
 
 run_btn.onclick = _ => {

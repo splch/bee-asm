@@ -10,35 +10,32 @@ The interpreter, exportation, and language is designed to be as readable as poss
 
 This table uses some keys for conciseness. `d` is `d`estination, `s` is `s`ource, `pc` is `p`rogram `c`ounter, and `n` is a`n`y address or value. Addresses can be relative or absolute.
 
-| function       | opcode      | action               |
-| -------------- | ----------- | -------------------- |
-| arithmetic     | add d, s    | d = d + s            |
-|                | sub d, s    | d = d - s            |
-|                | mul d, s    | d = d \* s           |
-|                | div d, s    | d = d / s            |
-|                | inc d       | d = d + 1            |
-|                | dec d       | d = d - 1            |
-|                | mov d, s    | d = s                |
-| logic          | and d, s    | d = d & s            |
-|                | or d, s     | d = d \| s           |
-|                | not d       | d = !d               |
-|                | nor d, s    | d = !(d \| s)        |
-|                | xor d, s    | d = d ^ s            |
-| branch         | beq d, s, n | if (d == s) pc += n  |
-|                | bne d, s, n | if (d != s) pc += n  |
-|                | bgt d, s, n | if (d > s) pc += n   |
-|                | blt d, s, n | if (d < s) pc += n   |
-|                | bge d, s, n | if (d >= s) pc += n  |
-|                | ble d, s, n | if (d <= s) pc += n  |
-|                | brk         | pc = 60              |
-|                | jmp n       | pc = n               |
-| load and store | lb d, n     | d = \*(char \*)(n)   |
-|                | lbu d, n    | d = \*(Uchar \*)(n)  |
-|                | lh d, n     | d = \*(short \*)(n)  |
-|                | lhu d, n    | d = \*(Ushort \*)(n) |
-|                | lw d, n     | d = \*(int \*)(n)    |
-|                | sb s, n     | \*(char \*)(n) = s   |
-|                | sh s, n     | \*(short \*)(n) = s  |
-|                | sw s, n     | \*(int \*)(n) = s    |
-| shift          | sll d, n    | d = d << n           |
-|                | srl d, n    | d = d >> n           |
+| function       | opcode      | action              |
+| -------------- | ----------- | ------------------- |
+| arithmetic     | add d, s    | d = d + s           |
+|                | sub d, s    | d = d - s           |
+|                | mul d, s    | d = d \* s          |
+|                | div d, s    | d = d / s           |
+|                | inc d       | d = d + 1           |
+|                | dec d       | d = d - 1           |
+|                | mov d, s    | d = s               |
+| logic          | and d, s    | d = d & s           |
+|                | or d, s     | d = d \| s          |
+|                | nor d, s    | d = !(d \| s)       |
+|                | xor d, s    | d = d ^ s           |
+| branch         | beq d, s, n | if (d == s) pc += n |
+|                | bne d, s, n | if (d != s) pc += n |
+|                | bgt d, s, n | if (d > s) pc += n  |
+|                | blt d, s, n | if (d < s) pc += n  |
+|                | bge d, s, n | if (d >= s) pc += n |
+|                | ble d, s, n | if (d <= s) pc += n |
+|                | brk         | pc = 60             |
+|                | jmp n       | pc = n              |
+| load and store | lb d, n     | d = \*(char \*)(n)  |
+|                | lw d, n     | d = \*(int \*)(n)   |
+|                | sb s, n     | \*(char \*)(n) = s  |
+|                | sw s, n     | \*(int \*)(n) = s   |
+| shift          | sll d, n    | d = d << n          |
+|                | srl d, n    | d = d >> n          |
+|                | sla d, n    | d = d << n          |
+|                | sra d, n    | d = d >> n          |
