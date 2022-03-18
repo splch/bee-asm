@@ -102,7 +102,7 @@ function interpreter(parsed) {
     }
 
     try {
-        const result = eval(line);
+        const result = eval(`(${line})`);
         console.log(result);
     } catch (e) {
         console.log(e);
