@@ -16,19 +16,13 @@ This table uses some keys for conciseness. `d` is `d`estination, `s` is `s`ource
 |                | sub d, s    | d = d - s           |
 |                | mul d, s    | d = d \* s          |
 |                | div d, s    | d = d / s           |
-|                | inc d       | d = d + 1           |
-|                | dec d       | d = d - 1           |
-|                | mov d, s    | d = s               |
 | logic          | and d, s    | d = d & s           |
 |                | or d, s     | d = d \| s          |
-|                | nor d, s    | d = !(d \| s)       |
 |                | xor d, s    | d = d ^ s           |
 | branch         | beq d, s, n | if (d == s) pc += n |
 |                | bne d, s, n | if (d != s) pc += n |
 |                | bgt d, s, n | if (d > s) pc += n  |
 |                | blt d, s, n | if (d < s) pc += n  |
-|                | bge d, s, n | if (d >= s) pc += n |
-|                | ble d, s, n | if (d <= s) pc += n |
 |                | brk         | pc = 60             |
 |                | jmp n       | pc = n              |
 | load and store | lb d, n     | d = \*(char \*)(n)  |
