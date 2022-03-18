@@ -24,12 +24,16 @@
 
 # Syntax
 
+Each term (label, operation, operand) must take the form `[^\s:,;]+`.
+
 ```asm
-label: operation operand ; comment, : comment
-label: operation operand, operand ; comment, : comment
+label:operation operand;comment, : comment
+label: operation operand,operand ; comment, :; comment
+label: operation  operand,  operand;
 label: operation operand
 label: operation operand, operand
 label: operation ; comment, : comment
+label: operation;
 label: operation
 label:
 ; comment, : comment
@@ -46,21 +50,21 @@ label:
 
 ## The grammar from this example is:
 
-1. The label is the start of the line to the first space
+1. The label is the start of the line to the colon
 
-2. The operation is the first word after the first space
+2. The operation is the first term after the colon
 
-3. The operands are the number of words specified by the operation after the operation
+3. The operands are the terms after the operation
 
-4. The comments are everything following the final operand
+4. The comments are everything following a semicolon
 
 ## Converting to Regex
 
-1. Labels: `^\S*(?=:)`
+1. Labels: `^[^\s:,;]*(?=:)`
 
-2. Operations: `(?<!;.*)((?<=:\s*|^\s+)\S+)`
+2. Operations: `(?<!;.*)((?<=:\s*|^\s+)[^\s:,;]+)`
 
-3. Operands: `(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)`
+3. Operands: `(?<!;.*)((?<=([^\s:]+\s+|,))[^\s:,;]+)`
 
 4. Comments: `(?<=;).*`
 

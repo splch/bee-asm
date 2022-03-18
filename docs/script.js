@@ -1,12 +1,12 @@
-// Globals
+// Global variables
 const source = document.getElementById("source");
 const run_btn = document.getElementById("run");
 let state = {};
 
 // Lexer
-let label_regex = new RegExp(/^\S*(?=:)/g);
-let operation_regex = new RegExp(/(?<!;.*)((?<=:\s*|^\s+)\S+)/g);
-let operand_regex = new RegExp(/(?<!;.*)((?<=(:*\s+\S+\s+))[^\s,;]+)/g);
+let label_regex = new RegExp(/^[^\s:,;]*(?=:)/g);
+let operation_regex = new RegExp(/(?<!;.*)((?<=:\s*|^\s+)[^\s:,;]+)/g);
+let operand_regex = new RegExp(/(?<!;.*)((?<=([^\s:]+\s+|,))[^\s:,;]+)/g);
 let comment_regex = new RegExp(/(?<=;).*/g);
 
 // Parser
@@ -66,64 +66,71 @@ function appendCode(parsed) {
     document.getElementById("output").appendChild(newLine_span);
 }
 
-function resetTextArea(textArea) {
-    textArea.value = "";
-    textArea.rows = 1;
+function reset() {
+    // Reset textarea when code is run
+    source.value = "";
+    source.rows = 1;
+
+    // Rest button after code is run
+    run_btn.innerText = "Run";
+    run_btn.disabled = false; // Enable button
+}
+
+function insertTab() {
+    const start = source.selectionStart;
+    const end = source.selectionEnd;
+
+    // Set textarea value to before+tab+after
+    source.value = source.value.substring(0, start) +
+        "\t" + source.value.substring(end);
+
+    // Move to correct position
+    source.selectionStart = source.selectionEnd = start + 1;
 }
 
 function run(lines) {
-    run_btn.disabled = true; // Disable button
-    const parsed_lines = [];
-    for (const line of lines.split("\n")) {
-        // Parse lines
-        parsed_lines.push(parser(line));
-        // Display lines in output
-        appendCode(parsed_lines?.at(parsed_lines.length - 1));
-    }
-    for (const parsed of parsed_lines) {
-        // Interpret lines
-        interpreter(parsed);
-    }
-    run_btn.innerText = "Run";
-    run_btn.disabled = false; // Enable button
+    return new Promise((resolve, reject) => {
+        try {
+            const parsed_lines = [];
+            for (const line of lines.split("\n")) {
+                // Parse lines
+                parsed_lines.push(parser(line));
+                // Display lines in output
+                appendCode(parsed_lines?.at(parsed_lines.length - 1));
+            }
+            for (const parsed of parsed_lines) {
+                // Interpret lines
+                interpreter(parsed);
+            }
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
 }
 
 source.onkeydown = e => {
     if (e.key === "Tab") {
         // Prevent focus from moving to next element
         e.preventDefault();
-        const start = source.selectionStart;
-        const end = source.selectionEnd;
-
-        // set textarea value to before+tab+after
-        source.value = source.value.substring(0, start) +
-            "\t" + source.value.substring(end);
-
-        // move to correct position
-        source.selectionStart = source.selectionEnd = start + 1;
+        insertTab();
     }
-    if (e.key === "Enter") {
+    if (e.key === "Enter")
         // Expand textarea on enter
         e.target.rows++;
-    }
-    if (e.key === "Backspace") {
+    if (e.key === "Backspace")
         // Shrink textarea on backspace
         if (e.target.rows > 1)
             e.target.rows--;
-    }
     if (e.shiftKey && e.key === "Enter") {
-        run(e.target.value);
-        // Reset textarea when code is run
-        resetTextArea(e.target);
+        // Prevent new line from being added
+        e.preventDefault();
+        run_btn.disabled = true; // Disable button
+        run(e.target.value).then(reset);
     }
-}
-
-source.onkeyup = e => {
-    if (e.shiftKey && e.key === "Enter")
-        resetTextArea(e.target);
 }
 
 run_btn.onclick = _ => {
-    run(source.value);
-    resetTextArea(source);
+    run_btn.disabled = true; // Disable button
+    run(source.value).then(reset);
 }
