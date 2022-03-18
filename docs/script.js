@@ -55,57 +55,17 @@ function parser(line) {
 function interpreter(parsed) {
     run_btn.innerText = "Interpret";
 
-    let line = "";
-    switch (parsed.operation) {
-        case "add":
-            line = parsed.operands?.at(0) + "+" + parsed.operands?.at(1);
-        case "sub":
-            line = parsed.operands?.at(0) + "-" + parsed.operands?.at(1);
-        case "mul":
-            line = parsed.operands?.at(0) + "*" + parsed.operands?.at(1);
-        case "div":
-            line = parsed.operands?.at(0) + "/" + parsed.operands?.at(1);
-        case "and":
-            line = parsed.operands?.at(0) + "&" + parsed.operands?.at(1);
-        case "or":
-            line = parsed.operands?.at(0) + "|" + parsed.operands?.at(1);
-        case "xor":
-            line = parsed.operands?.at(0) + "^" + parsed.operands?.at(1);
-        case "beq":
-            line = parsed.operands?.at(0) + "==" + parsed.operands?.at(1);
-        case "bne":
-            line = parsed.operands?.at(0) + "!=" + parsed.operands?.at(1);
-        case "bgt":
-            line = parsed.operands?.at(0) + ">" + parsed.operands?.at(1);
-        case "blt":
-            line = parsed.operands?.at(0) + "<" + parsed.operands?.at(1);
-        case "brk":
-            line = "break";
-        case "jmp":
-            line = "jump " + parsed.operands?.at(0);
-        case "lb":
-            line = parsed.operands?.at(0) + "=" + parsed.operands?.at(1);
-        case "lw":
-            line = parsed.operands?.at(0) + "=" + parsed.operands?.at(1);
-        case "sb":
-            line = parsed.operands?.at(0) + "=" + parsed.operands?.at(1);
-        case "sw":
-            line = parsed.operands?.at(0) + "=" + parsed.operands?.at(1);
-        case "sll":
-            line = parsed.operands?.at(0) + "<<" + parsed.operands?.at(1);
-        case "srl":
-            line = parsed.operands?.at(0) + ">>" + parsed.operands?.at(1);
-        case "sla":
-            line = parsed.operands?.at(0) + "<<" + parsed.operands?.at(1);
-        case "sra":
-            line = parsed.operands?.at(0) + ">>" + parsed.operands?.at(1);
-    }
+    let line = `${parsed.operands?.at(0)} ${instructions[parsed.operation]} ${parsed.operands?.at(1)}`;
+    let result;
 
     try {
-        const result = eval(`(${line})`);
-        console.log(result);
+        result = eval(`${line}`);
     } catch (e) {
-        console.log(e);
+        result = e.message;
+    } finally {
+        parsed.comment = (parsed.comment ? parsed.comment : "; ")
+            + " ".repeat(tab) + "= " + result;
+        return parsed;
     }
 }
 
@@ -142,14 +102,6 @@ function appendCode(parsed, line) {
         div.appendChild(comment_span);
     if (div.hasChildNodes())
         document.getElementById("output").appendChild(div);
-    else if (line !== "")
-        // If parsing fails, display error as comment
-        appendCode({
-            label: "",
-            operation: "",
-            operand: "",
-            comment: "; Error parsing: " + line
-        }, "");
 }
 
 function reset() {
@@ -178,17 +130,16 @@ function run(lines) {
     run_btn.disabled = true; // Disable button
     return new Promise((resolve, reject) => {
         try {
-            const parsed_lines = [];
-            for (const line of lines.split("\n")) {
+            let parsed_lines = [];
+            for (const line of lines.split("\n"))
                 // Parse lines
                 parsed_lines.push(parser(line));
-                // Display lines in output
-                appendCode(parsed_lines?.at(parsed_lines.length - 1), line);
-            }
-            for (const parsed of parsed_lines) {
+            for (let i = 0; i < parsed_lines.length; i++)
                 // Interpret lines
-                interpreter(parsed);
-            }
+                parsed_lines[i] = interpreter(parsed_lines.at(i));
+            for (const parsed of parsed_lines)
+                // Display lines in output
+                appendCode(parsed_lines?.at(parsed_lines.length - 1));
             resolve();
         } catch (e) {
             reject(e);
