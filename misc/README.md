@@ -24,7 +24,7 @@
 
 # Syntax
 
-Each term (label, operation, operand) must take the form `[^\s:,;]+`.
+Each term (label, operation, operand) must take the form `\w`.
 
 ```asm
 label:operation operand;comment, : comment
@@ -60,11 +60,11 @@ label:
 
 ## Converting to Regex
 
-1. Labels: `^[^\s:,;]*(?=:)`
+1. Labels: `^\w*(?=:)`
 
-2. Operations: `(?<!;.*)((?<=:\s*|^\s+)[^\s:,;]+)`
+2. Operations: `(?<!;.*)((?<=:\s*|^\s+)\w+)`
 
-3. Operands: `(?<!;.*)((?<=([^\s:]+\s+|,))[^\s:,;]+)`
+3. Operands: `(?<!;.*)((?<=([^\s:]+\s+|,))\w+)`
 
 4. Comments: `(?<=;).*`
 

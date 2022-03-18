@@ -4,9 +4,9 @@ const run_btn = document.getElementById("run");
 let state = {};
 
 // Lexer
-let label_regex = new RegExp(/^[^\s:,;]*(?=:)/g);
-let operation_regex = new RegExp(/(?<!;.*)((?<=:\s*|^\s+)[^\s:,;]+)/g);
-let operand_regex = new RegExp(/(?<!;.*)((?<=([^\s:]+\s+|,))[^\s:,;]+)/g);
+let label_regex = new RegExp(/^\w*(?=:)/g);
+let operation_regex = new RegExp(/(?<!;.*)((?<=:\s*|^\s+)\w+)/g);
+let operand_regex = new RegExp(/(?<!;.*)((?<=([^\s:]+\s+|,))\w+)/g);
 let comment_regex = new RegExp(/(?<=;).*/g);
 
 // Parser
@@ -36,34 +36,33 @@ function appendCode(parsed) {
     const operation = parsed.operation + " ";
     const operands = parsed.operands?.join(", ");
     const comment = " ; " + parsed.comment;
-    const newLine = "\n";
 
+    const line = document.createElement("div");
     const label_span = document.createElement("span");
     const operation_span = document.createElement("span");
     const operands_span = document.createElement("span");
     const comment_span = document.createElement("span");
-    const newLine_span = document.createElement("span");
 
     label_span.innerText = label;
     operation_span.innerText = operation;
     operands_span.innerText = operands;
     comment_span.innerText = comment;
-    newLine_span.innerText = newLine;
 
-    label_span.style.color = "#000080";
-    operation_span.style.color = "#800000";
-    operands_span.style.color = "#008000";
-    comment_span.style.color = "#808080";
+    label_span.style.color = "#5f5fff";
+    operation_span.style.color = "#ec0000";
+    operands_span.style.color = "#008900";
+    comment_span.style.color = "#757575";
 
     if (parsed.label)
-        document.getElementById("output").appendChild(label_span);
+        line.appendChild(label_span);
     if (parsed.operation)
-        document.getElementById("output").appendChild(operation_span);
+        line.appendChild(operation_span);
     if (parsed.operands)
-        document.getElementById("output").appendChild(operands_span);
+        line.appendChild(operands_span);
     if (parsed.comment)
-        document.getElementById("output").appendChild(comment_span);
-    document.getElementById("output").appendChild(newLine_span);
+        line.appendChild(comment_span);
+    if (line.hasChildNodes())
+        document.getElementById("output").appendChild(line);
 }
 
 function reset() {
@@ -89,6 +88,7 @@ function insertTab() {
 }
 
 function run(lines) {
+    run_btn.disabled = true; // Disable button
     return new Promise((resolve, reject) => {
         try {
             const parsed_lines = [];
@@ -110,6 +110,11 @@ function run(lines) {
 }
 
 source.onkeydown = e => {
+    if (e.shiftKey && e.key === "Enter") {
+        // Prevent new line from being added
+        e.preventDefault();
+        run(e.target.value).then(reset);
+    }
     if (e.key === "Tab") {
         // Prevent focus from moving to next element
         e.preventDefault();
@@ -122,15 +127,8 @@ source.onkeydown = e => {
         // Shrink textarea on backspace
         if (e.target.rows > 1)
             e.target.rows--;
-    if (e.shiftKey && e.key === "Enter") {
-        // Prevent new line from being added
-        e.preventDefault();
-        run_btn.disabled = true; // Disable button
-        run(e.target.value).then(reset);
-    }
 }
 
 run_btn.onclick = _ => {
-    run_btn.disabled = true; // Disable button
     run(source.value).then(reset);
 }
