@@ -25,13 +25,14 @@ const instructions = {
 };
 const tab = 4;
 const source = document.getElementById("source");
+const output = document.getElementById("output");
 const run_btn = document.getElementById("run");
 
 // Lexer
-const label_regex = new RegExp(/^[^\s,;:]+(?=:)/g);
-const operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)[^\s,;:]+/g);
-const operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))[^\s,;:]+/g);
-const comment_regex = new RegExp(/;.*/g);
+const label_regex = new RegExp(/^[^\s:,#]+(?=:)/g);
+const operation_regex = new RegExp(/(?<!#.*)(?<=:\s*|^\s+)[^\s:,#]+/g);
+const operand_regex = new RegExp(/(?<!#.*)(?<=([^\s:]+\s+|,))[^\s:,#]+/g);
+const comment_regex = new RegExp(/#.*/g);
 
 // Parser
 function parser(line) {
@@ -129,7 +130,7 @@ function appendCode(parsed) {
     if (parsed.comment)
         // Add comment to output
         div.appendChild(comment_span);
-    document.getElementById("output").appendChild(div);
+    output.appendChild(div);
 }
 
 function reset() {
@@ -140,18 +141,28 @@ function reset() {
     // Rest button after code is run
     run_btn.innerText = "Run";
     run_btn.disabled = false; // Enable button
+
+    // Check to indent
+    indent();
 }
 
-function insertTab() {
+function indent(prepend = "") {
+    let string = prepend;
+    if ((output.innerText + source.value).match(label_regex))
+        string += " ".repeat(tab);
+    insertText(string);
+}
+
+function insertText(string) {
     const start = source.selectionStart;
     const end = source.selectionEnd;
 
     // Set textarea value to before+tab+after
-    source.value = source.value.substring(0, start) +
-        " ".repeat(tab) + source.value.substring(end);
+    source.value = source.value.substring(0, start) + string
+        + source.value.substring(end);
 
     // Move to correct position
-    source.selectionStart = source.selectionEnd = start + tab;
+    source.selectionStart = source.selectionEnd = start + string.length;
 }
 
 function run(lines) {
@@ -173,10 +184,14 @@ source.onkeydown = e => {
         e.preventDefault();
         run(e.target.value).then(reset);
     }
+    else if (e.key === "Enter") {
+        e.preventDefault();
+        indent("\n");
+    }
     else if (e.key === "Tab") {
         // Prevent focus from moving to next element
         e.preventDefault();
-        insertTab();
+        insertText(" ".repeat(tab));
     }
 }
 
