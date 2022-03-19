@@ -28,9 +28,9 @@ const source = document.getElementById("source");
 const run_btn = document.getElementById("run");
 
 // Lexer
-const label_regex = new RegExp(/^\w+(?=:)/g);
-const operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)\w+/g);
-const operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))\w+/g);
+const label_regex = new RegExp(/^[^\s,;:]+(?=:)/g);
+const operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)[^\s,;:]+/g);
+const operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))[^\s,;:]+/g);
 const comment_regex = new RegExp(/;.*/g);
 
 // Parser
@@ -155,24 +155,15 @@ function insertTab() {
 }
 
 function run(lines) {
-    console.log(state);
     run_btn.disabled = true; // Disable button
     return new Promise((resolve, reject) => {
-        try {
-            let parsed_lines = [];
-            for (const line of lines.split("\n"))
-                // Parse lines
-                parsed_lines.push(parser(line));
-            for (let i = 0; i < parsed_lines.length; i++)
-                // Interpret lines
-                parsed_lines[i] = interpreter(parsed_lines.at(i));
-            for (const parsed of parsed_lines)
-                // Display lines in output
-                appendCode(parsed);
-            resolve();
-        } catch (e) {
-            reject(e);
-        }
+        // Parse lines
+        let parsed_lines = lines.split("\n").map(parser);
+        // Interpret lines
+        let interpreted_lines = parsed_lines.map(interpreter);
+        // Display lines in output
+        interpreted_lines.map(appendCode);
+        resolve();
     });
 }
 

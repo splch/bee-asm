@@ -26,7 +26,7 @@
 
 # Syntax
 
-Each term (label, operation, operand) must take the form `\w+`.
+Each term (label, operation, operand) must take the form `[^\s,;:]+`. Meaning that terms must not contain spaces, commas, semicolons, or colons.
 
 ```asm
 label:operation operand;comment, : comment
@@ -62,11 +62,11 @@ label:
 
 ## Converting to Regex
 
-1. Labels: `^\w+(?=:)`
+1. Labels: `^[^\s,;:]+(?=:)`
 
-2. Operations: `(?<!;.*)(?<=:\s*|^\s+)\w+`
+2. Operations: `(?<!;.*)(?<=:\s*|^\s+)[^\s,;:]+`
 
-3. Operands: `(?<!;.*)(?<=([^\s:]+\s+|,))\w+`
+3. Operands: `(?<!;.*)(?<=([^\s:]+\s+|,))[^\s,;:]+`
 
 4. Comments: `(?<=;).*`
 
