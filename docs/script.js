@@ -1,8 +1,5 @@
 // Global variables
-const source = document.getElementById("source");
-const run_btn = document.getElementById("run");
 let state = {};
-const tab = 4;
 const instructions = {
     "add": "+",
     "sub": "-",
@@ -11,27 +8,30 @@ const instructions = {
     "and": "&",
     "or": "|",
     "xor": "^",
+    "sll": "<<",
+    "srl": ">>",
+    "sla": "<<",
+    "sra": ">>",
     "beq": "==",
     "bne": "!=",
     "bgt": ">",
     "blt": "<",
     "brk": "break",
     "jmp": "jump",
-    "lb": "=",
-    "lw": "=",
     "sb": "=",
     "sw": "=",
-    "sll": "<<",
-    "srl": ">>",
-    "sla": "<<",
-    "sra": ">>",
+    "lb": "=",
+    "lw": "=",
 };
+const tab = 4;
+const source = document.getElementById("source");
+const run_btn = document.getElementById("run");
 
 // Lexer
-let label_regex = new RegExp(/^\w+(?=:)/g);
-let operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)\w+/g);
-let operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))\w+/g);
-let comment_regex = new RegExp(/;.*/g);
+const label_regex = new RegExp(/^\w+(?=:)/g);
+const operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)\w+/g);
+const operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))\w+/g);
+const comment_regex = new RegExp(/;.*/g);
 
 // Parser
 function parser(line) {
@@ -54,22 +54,46 @@ function parser(line) {
 // Interpreter
 function interpreter(parsed) {
     run_btn.innerText = "Interpret";
-
-    let line = `${parsed.operands?.at(0)} ${instructions[parsed.operation]} ${parsed.operands?.at(1)}`;
     let result;
 
     try {
-        result = eval(`${line}`);
+        switch (parsed.operation) {
+            case "add":
+            case "sub":
+            case "mul":
+            case "div":
+            case "and":
+            case "or":
+            case "xor":
+            case "sll":
+            case "srl":
+            case "sla":
+            case "sra":
+                state[parsed.operands?.at(0)] = eval(state[parsed.operands?.at(0)] + instructions[parsed.operation] + state[parsed.operands?.at(1)]);
+                result = state[parsed.operands?.at(0)];
+                break;
+            case "sb":
+            case "sw":
+                state[parsed.operands?.at(0)] = parsed.operands?.at(1);
+                result = state[parsed.operands?.at(0)];
+                break;
+            case "lb":
+            case "lw":
+                state[parsed.operands?.at(1)] = state[parsed.operands?.at(0)];
+                result = state[parsed.operands?.at(1)];
+                break;
+        }
     } catch (e) {
         result = e.message;
     } finally {
-        parsed.comment = (parsed.comment ? parsed.comment : "; ")
-            + " ".repeat(tab) + "= " + result;
+        if (result !== undefined)
+            parsed.comment = (parsed.comment ? parsed.comment : "; ")
+                + " ".repeat(tab) + "= " + result;
         return parsed;
     }
 }
 
-function appendCode(parsed, line) {
+function appendCode(parsed) {
     const label = parsed.label + ":";
     const operation = " ".repeat(tab) + parsed.operation;
     const operands = " " + parsed.operands?.join(", ");
@@ -93,15 +117,19 @@ function appendCode(parsed, line) {
     comment_span.style.color = "var(--comment)";
 
     if (parsed.label)
+        // Add label to output
         div.appendChild(label_span);
-    if (parsed.operation)
+    if (parsed.operation) {
+        // Add operation to output
         div.appendChild(operation_span);
-    if (parsed.operands)
-        div.appendChild(operands_span);
+        if (parsed.operands)
+            // Add operands after operation
+            div.appendChild(operands_span);
+    }
     if (parsed.comment)
+        // Add comment to output
         div.appendChild(comment_span);
-    if (div.hasChildNodes())
-        document.getElementById("output").appendChild(div);
+    document.getElementById("output").appendChild(div);
 }
 
 function reset() {
@@ -127,6 +155,7 @@ function insertTab() {
 }
 
 function run(lines) {
+    console.log(state);
     run_btn.disabled = true; // Disable button
     return new Promise((resolve, reject) => {
         try {
@@ -139,7 +168,7 @@ function run(lines) {
                 parsed_lines[i] = interpreter(parsed_lines.at(i));
             for (const parsed of parsed_lines)
                 // Display lines in output
-                appendCode(parsed_lines?.at(parsed_lines.length - 1));
+                appendCode(parsed);
             resolve();
         } catch (e) {
             reject(e);
