@@ -30,6 +30,8 @@
 
 6. https://mark.theis.site/riscv/
 
+7. https://five-embeddev.com/riscv-isa-manual/latest/c.html
+
 # Syntax
 
 Each term (label, operation, operand) must take the form `[^\s:,#]+`. Meaning that terms must not contain spaces, colons, comas, or hashtags.
@@ -74,6 +76,6 @@ label:
 
 3. Operands: `(?<!#.*)(?<=([^\s:]+\s+|,))[^\s:,#]+`
 
-4. Comments: `#.*`
+4. Comments: `(?<=#).*`
 
 https://github.com/splch/bee-asm/blob/6f5cdcddcefe4743a0b6de1bdeaa120a49e85f11/docs/script.js#L2-L5

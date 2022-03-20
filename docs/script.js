@@ -26,10 +26,10 @@ const output = document.getElementById("output");
 const run_btn = document.getElementById("run");
 
 // Lexer
-const label_regex = new RegExp(/^[^\s:,#]+(?=:)/g);
+const label_regex = new RegExp(/^[^\s:,#]+(?=:)/gm);
 const operation_regex = new RegExp(/(?<!#.*)(?<=:\s*|^\s+)[^\s:,#]+/g);
 const operand_regex = new RegExp(/(?<!#.*)(?<=([^\s:]+\s+|,))[^\s:,#]+/g);
-const comment_regex = new RegExp(/#.*/g);
+const comment_regex = new RegExp(/(?<=#).*/g);
 
 // Parser
 function parser(line) {
@@ -39,7 +39,7 @@ function parser(line) {
     const label = line.match(label_regex)?.at(0);
     const operation = line.match(operation_regex)?.at(0).toLowerCase();
     const operands = line.match(operand_regex);
-    const comment = line.match(comment_regex)?.at(0).trim();
+    const comment = line.match(comment_regex)?.at(0);
 
     return {
         label,
@@ -97,7 +97,7 @@ function interpreter(parsed) {
         result = e.message;
     } finally {
         if (result !== undefined)
-            parsed.comment = (parsed.comment ? parsed.comment : "# ")
+            parsed.comment = "#" + (parsed.comment ? parsed.comment : "")
                 + " ".repeat(tab) + "= " + result;
         return parsed;
     }
@@ -142,24 +142,19 @@ function appendCode(parsed) {
     output.appendChild(div);
 }
 
-function reset() {
-    // Reset textarea when code is run
-    source.value = "";
-    source.rows = 1;
-
-    // Rest button after code is run
-    run_btn.innerText = "Run";
-    run_btn.disabled = false; // Enable button
-
-    // Check to indent
-    indent();
-}
-
-function indent(prepend = "") {
-    let string = prepend;
-    if ((output.innerText + source.value).match(label_regex))
-        string += " ".repeat(tab);
-    insertText(string);
+function run(lines) {
+    run_btn.disabled = true; // Disable button
+    return new Promise((resolve, reject) => {
+        // Parse lines
+        let parsed_lines = lines.split("\n").map(parser);
+        console.log("parsed lines:", parsed_lines)
+        // Interpret lines
+        let interpreted_lines = parsed_lines.map(interpreter);
+        console.log("interpreted lines:", interpreted_lines)
+        // Display lines in output
+        interpreted_lines.map(appendCode);
+        resolve();
+    });
 }
 
 function insertText(string) {
@@ -174,17 +169,24 @@ function insertText(string) {
     source.selectionStart = source.selectionEnd = start + string.length;
 }
 
-function run(lines) {
-    run_btn.disabled = true; // Disable button
-    return new Promise((resolve, reject) => {
-        // Parse lines
-        let parsed_lines = lines.split("\n").map(parser);
-        // Interpret lines
-        let interpreted_lines = parsed_lines.map(interpreter);
-        // Display lines in output
-        interpreted_lines.map(appendCode);
-        resolve();
-    });
+function indent(prepend = "") {
+    let string = prepend;
+    if ((output.innerText + "\n" + source.value).match(label_regex))
+        string += " ".repeat(tab);
+    insertText(string);
+}
+
+function reset() {
+    // Reset textarea when code is run
+    source.value = "";
+    source.rows = 1;
+
+    // Rest button after code is run
+    run_btn.innerText = "Run";
+    run_btn.disabled = false; // Enable button
+
+    // Check to indent
+    indent();
 }
 
 source.onkeydown = e => {
