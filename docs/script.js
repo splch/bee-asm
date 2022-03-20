@@ -84,7 +84,7 @@ function interpreter(parsed) {
                     state[parsed.operands?.at(0)] = result;
                 }
                 else {
-                    line = parsed.operands?.at(1) + " " + line;
+                    line = parsed.operands?.at(0) + " " + line;
                     result = eval(line);
                 }
                 break;
