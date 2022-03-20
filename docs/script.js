@@ -97,7 +97,7 @@ function interpreter(parsed) {
         result = e.message;
     } finally {
         if (result !== undefined)
-            parsed.comment = (parsed.comment ? parsed.comment : "; ")
+            parsed.comment = (parsed.comment ? parsed.comment : "# ")
                 + " ".repeat(tab) + "= " + result;
         return parsed;
     }
