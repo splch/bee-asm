@@ -10,6 +10,10 @@
 
 4. https://dannyqiu.me/mips-interpreter/
 
+5. https://github.com/mewmew/dissection
+
+6. https://cs.lmu.edu/~ray/notes/nasmtutorial/
+
 ## Instruction Set
 
 1. https://www.masswerk.at/6502/6502_instruction_set.html
