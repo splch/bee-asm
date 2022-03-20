@@ -71,14 +71,14 @@ function interpreter(parsed) {
                 let line = "";
                 // Determine if operands are addressed or immediate values
                 // add second operand to eval line
-                if (state[parsed.operands?.at(1)])
+                if (state[parsed.operands?.at(1)] !== undefined)
                     line = state[parsed.operands?.at(1)];
                 else
                     line = parsed.operands?.at(1);
                 // add instruction to eval line
                 line = instructions[parsed.operation] + " " + line;
                 // add first operand to eval line
-                if (state[parsed.operands?.at(0)]) {
+                if (state[parsed.operands?.at(0)] !== undefined) {
                     line = state[parsed.operands?.at(0)] + " " + line;
                     result = eval(line);
                     state[parsed.operands?.at(0)] = result;
@@ -89,8 +89,11 @@ function interpreter(parsed) {
                 }
                 break;
             case "mov":
-                state[parsed.operands?.at(0)] = parsed.operands?.at(1);
-                result = state[parsed.operands?.at(0)];
+                if (state[parsed.operands?.at(1) !== undefined])
+                    result = state[parsed.operands?.at(1)];
+                else
+                    result = parsed.operands?.at(1);
+                state[parsed.operands?.at(0)] = result;
                 break;
         }
     } catch (e) {
@@ -150,7 +153,7 @@ function run(lines) {
         console.log("parsed lines:", parsed_lines)
         // Interpret lines
         let interpreted_lines = parsed_lines.map(interpreter);
-        console.log("interpreted lines:", interpreted_lines)
+        console.log("state:", state)
         // Display lines in output
         interpreted_lines.map(appendCode);
         resolve();
@@ -171,6 +174,7 @@ function insertText(string) {
 
 function indent(prepend = "") {
     let string = prepend;
+    // Add tabs if there's a label
     if ((output.innerText + "\n" + source.value).match(label_regex))
         string += " ".repeat(tab);
     insertText(string);
