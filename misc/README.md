@@ -78,4 +78,4 @@ label:
 
 4. Comments: `(?<=#).*`
 
-https://github.com/splch/bee-asm/blob/6f5cdcddcefe4743a0b6de1bdeaa120a49e85f11/docs/script.js#L2-L5
+https://github.com/splch/bee-asm/blob/24ce13e56413f8b8525bd588f41800937c23e4c6/docs/script.js#L29-L32
