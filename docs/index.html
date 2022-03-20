@@ -7,7 +7,8 @@
   <title>Assembly</title>
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐝</text></svg>">
-  <link href="simple.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kevquirk/simple.css/simple.min.css" media="print"
+    onload="this.media='all'; this.onload=null;">
   <script src="script.js" defer></script>
   <style>
     :root {
@@ -21,11 +22,11 @@
 
 <body>
   <h1>Bee Assembly</h1>
-  <pre id="output"></pre>
+  <pre id="output" tabindex="2"></pre>
   <div style="align-items: stretch; display: flex">
-    <textarea id="source" style="height: 100%; resize: none; width: 100%" spellcheck="false" autocapitalize="off"
-      autocorrect="off" autocomplete="off" autofocus rows="1"></textarea>
-    <button id="run" style="height: 100%; margin: 0">Run</button>
+    <textarea id="source" rows="1" style="height: 100%; resize: none; width: 100%" spellcheck="false"
+      autocapitalize="off" autocorrect="off" autocomplete="off" autofocus tabindex="0"></textarea>
+    <button id="run" style="height: 100%; margin: 0" tabindex="1">Run</button>
   </div>
 </body>
 

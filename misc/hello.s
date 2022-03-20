@@ -23,8 +23,8 @@ hello:                        # the CPU can jump to the hello label in memory
 section .text                 # the section directive is used to declare a
                               # section of code
 
-global start                  # the global directive is used to declare a global
-                              # label
+global start                  # the global directive is used to declare a
+                              # global label
 
 start:                        # the label for the start of the program
     mov rax, 1                # system call for write

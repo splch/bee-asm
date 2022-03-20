@@ -1,6 +1,7 @@
 // Global variables
 let state = {};
 const instructions = {
+    "mov": "=",
     "add": "+",
     "sub": "-",
     "mul": "*",
@@ -18,10 +19,6 @@ const instructions = {
     "blt": "<",
     "brk": "break",
     "jmp": "jump",
-    "sb": "=",
-    "sw": "=",
-    "lb": "=",
-    "lw": "=",
 };
 const tab = 4;
 const source = document.getElementById("source");
@@ -55,10 +52,11 @@ function parser(line) {
 // Interpreter
 function interpreter(parsed) {
     run_btn.innerText = "Interpret";
+    const operation = parsed.operation;
     let result;
 
     try {
-        switch (parsed.operation) {
+        switch (operation) {
             case "add":
             case "sub":
             case "mul":
@@ -70,18 +68,29 @@ function interpreter(parsed) {
             case "srl":
             case "sla":
             case "sra":
-                state[parsed.operands?.at(0)] = eval(state[parsed.operands?.at(0)] + instructions[parsed.operation] + state[parsed.operands?.at(1)]);
-                result = state[parsed.operands?.at(0)];
+                let line = "";
+                // Determine if operands are addressed or immediate values
+                // add second operand to eval line
+                if (state[parsed.operands?.at(1)])
+                    line = state[parsed.operands?.at(1)];
+                else
+                    line = parsed.operands?.at(1);
+                // add instruction to eval line
+                line = instructions[parsed.operation] + " " + line;
+                // add first operand to eval line
+                if (state[parsed.operands?.at(0)]) {
+                    line = state[parsed.operands?.at(0)] + " " + line;
+                    result = eval(line);
+                    state[parsed.operands?.at(0)] = result;
+                }
+                else {
+                    line = parsed.operands?.at(1) + " " + line;
+                    result = eval(line);
+                }
                 break;
-            case "sb":
-            case "sw":
+            case "mov":
                 state[parsed.operands?.at(0)] = parsed.operands?.at(1);
                 result = state[parsed.operands?.at(0)];
-                break;
-            case "lb":
-            case "lw":
-                state[parsed.operands?.at(1)] = state[parsed.operands?.at(0)];
-                result = state[parsed.operands?.at(1)];
                 break;
         }
     } catch (e) {

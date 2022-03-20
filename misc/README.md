@@ -14,6 +14,8 @@
 
 6. https://cs.lmu.edu/~ray/notes/nasmtutorial/
 
+7. https://docs.oracle.com/cd/E26502_01/html/E28388/eqbsx.html
+
 ## Instruction Set
 
 1. https://www.masswerk.at/6502/6502_instruction_set.html
@@ -30,7 +32,7 @@
 
 # Syntax
 
-Each term (label, operation, operand) must take the form `[^\s:,#]+`. Meaning that terms must not contain spaces, commas, semicolons, or colons.
+Each term (label, operation, operand) must take the form `[^\s:,#]+`. Meaning that terms must not contain spaces, colons, comas, or hashtags.
 
 ```asm
 label:operation operand#comment, comment: comment
