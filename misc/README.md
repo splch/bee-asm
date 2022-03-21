@@ -34,26 +34,26 @@
 
 # Syntax
 
-Each term (label, operation, operand) must take the form `[^\s:,#]+`. Meaning that terms must not contain spaces, colons, comas, or hashtags.
+Each term (label, operation, operand) must take the form `[^\s:,;]+`. Meaning that terms must not contain spaces, colons, comas, or semicolons.
 
 ```asm
-label:operation operand#comment, comment: comment
-label: operation operand,operand #  comment, :# comment
-label: operation  operand,  operand#
+label:operation operand;comment, comment: comment
+label: operation operand,operand ;  comment, :; comment
+label: operation  operand,  operand;
 label: operation operand
 label: operation operand, operand
-label: operation # comment, : comment
-label: operation#
+label: operation ; comment, : comment
+label: operation;
 label: operation
 label:
-# comment, : comment
-#comment:, : comment
-    operation operand # comment, : comment
-    operation operand, operand # comment, : comment
+; comment, : comment
+;comment:, : comment
+    operation operand ; comment, : comment
+    operation operand, operand ; comment, : comment
     operation operand
     operation operand, operand
-    operation # comment, : comment
-    operation #comment, : comment
+    operation ; comment, : comment
+    operation ;comment, : comment
     operation
 
 ```
@@ -70,12 +70,12 @@ label:
 
 ## Converting to Regex
 
-1. Labels: `^[^\s:,#]+(?=:)`
+1. Labels: `^[^\s:,;]+(?=:)`
 
-2. Operations: `(?<!#.*)(?<=:\s*|^\s+)[^\s:,#]+`
+2. Operations: `(?<!;.*)(?<=:\s*|^\s+)[^\s:,;]+`
 
-3. Operands: `(?<!#.*)(?<=([^\s:]+\s+|,))[^\s:,#]+`
+3. Operands: `(?<!;.*)(?<=([^\s:]+\s+|,))[^\s:,;]+`
 
-4. Comments: `(?<=#).*`
+4. Comments: `(?<=;).*`
 
 https://github.com/splch/bee-asm/blob/24ce13e56413f8b8525bd588f41800937c23e4c6/docs/script.js#L29-L32

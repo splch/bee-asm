@@ -1,5 +1,7 @@
 // Global variables
-let state = {};
+let state = {
+    "pc": 0,
+};
 const instructions = {
     "mov": "=",
     "add": "+",
@@ -19,17 +21,18 @@ const instructions = {
     "blt": "<",
     "brk": "break",
     "jmp": "jump",
+    "nop": "",
 };
 const tab = 4;
-const source = document.getElementById("source");
-const output = document.getElementById("output");
-const run_btn = document.getElementById("run");
+const source = document.getElementsByTagName("textarea")[0];
+const output = document.getElementsByTagName("pre")[0];
+const run_btn = document.getElementsByTagName("button")[0];
 
 // Lexer
-const label_regex = new RegExp(/^[^\s:,#]+(?=:)/gm);
-const operation_regex = new RegExp(/(?<!#.*)(?<=:\s*|^\s+)[^\s:,#]+/g);
-const operand_regex = new RegExp(/(?<!#.*)(?<=([^\s:]+\s+|,))[^\s:,#]+/g);
-const comment_regex = new RegExp(/(?<=#).*/g);
+const label_regex = new RegExp(/^[^\s:,;]+(?=:)/gm);
+const operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)[^\s:,;]+/g);
+const operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))[^\s:,;]+/g);
+const comment_regex = new RegExp(/(?<=;).*/g);
 
 // Parser
 function parser(line) {
@@ -100,7 +103,7 @@ function interpreter(parsed) {
         result = e.message;
     } finally {
         if (result !== undefined)
-            parsed.comment = "#" + (parsed.comment ? parsed.comment : "")
+            parsed.comment = ";" + (parsed.comment ? parsed.comment : "")
                 + " ".repeat(tab) + "= " + result;
         return parsed;
     }
