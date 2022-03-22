@@ -39,7 +39,7 @@ Here is a `hello, world` example in Bee Assembly:
                                   ; data section
 
 hello:                            ; the CPU can jump to this label in memory
-	.string "hello, world\n",     ; the message is a string with a new line
+	.string "hello, world\n", ; the message is a string with a new line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    code section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
