@@ -10,9 +10,6 @@
   `-'
 ```
 
-![LGTM Grade](https://img.shields.io/lgtm/grade/javascript/github/splch/asm.la)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/splch/asm.la)
-
 The goal of Bee Assembly is to ease the transition from using higher-level languages to learning assembly. Bee Assembly is interpreted with JavaScript, but shares the most common features (syntax, directives, instructions, etc.) of the most common languages.
 
 The language and its interpreter are designed to be as readable as possible. Not only should the language be easy to use, but it should be a good reference for basic interpreter design.
@@ -38,21 +35,21 @@ Here is a `hello, world` example in Bee Assembly:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    data section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.section .data                ; the section directive is used to define a data
-                              ; section
+.section .data                    ; the section directive is used to define a
+                                  ; data section
 
-hello:                        ; the CPU can jump to the hello label in memory
-	.string "hello, world\n", ; the message is a string with a new line
+hello:                            ; the CPU can jump to this label in memory
+	.string "hello, world\n",     ; the message is a string with a new line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    code section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.section .text                ; the section directive is used to declare a
-                              ; section of code
+.section .text                    ; the section directive is used to declare a
+                                  ; section of code
 
-.global start                 ; the global directive is used to declare a
-                              ; global label
+.global start                     ; the global directive is used to declare a
+                                  ; global label
 
-start:                        ; the label for the start of the program
+start:                            ; the label for the start of the program
 	mov rax, 1                ; system call for write
 	mov rdi, 1                ; file handle 1 is stdout
 	mov rsi, hello            ; address of string to output
