@@ -10,6 +10,9 @@
   `-'
 ```
 
+![LGTM Grade](https://img.shields.io/lgtm/grade/javascript/github/splch/bee-asm)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/splch/bee-asm)
+
 The goal of Bee Assembly is to ease the transition from using higher-level languages to learning assembly. Bee Assembly is interpreted with JavaScript, but shares the most common features (syntax, directives, instructions, etc.) of the most common languages.
 
 The language and its interpreter are designed to be as readable as possible. Not only should the language be easy to use, but it should be a good reference for basic interpreter design.

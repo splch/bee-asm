@@ -23,7 +23,6 @@ const instructions = {
     "jmp": "jump",
     "nop": "",
 };
-const tab = 4;
 const source = document.getElementsByTagName("textarea")[0];
 const output = document.getElementsByTagName("pre")[0];
 const run_btn = document.getElementsByTagName("button")[0];
@@ -103,17 +102,19 @@ function interpreter(parsed) {
         result = e.message;
     } finally {
         if (result !== undefined)
-            parsed.comment = ";" + (parsed.comment ? parsed.comment : "")
-                + " ".repeat(tab) + "= " + result;
+            parsed.comment = (parsed.comment !== undefined
+                ? parsed.comment : "") + "\t" + "= " + result;
+        if (parsed.comment !== undefined)
+            parsed.comment = ";" + parsed.comment;
         return parsed;
     }
 }
 
 function appendCode(parsed) {
     const label = parsed.label + ":";
-    const operation = " ".repeat(tab) + parsed.operation;
+    const operation = "\t" + parsed.operation;
     const operands = " " + parsed.operands?.join(", ");
-    const comment = " ".repeat(tab) + parsed.comment;
+    const comment = "\t" + parsed.comment;
 
     const div = document.createElement("div");
     const label_span = document.createElement("span");
@@ -132,17 +133,16 @@ function appendCode(parsed) {
     operands_span.style.color = "var(--operand)";
     comment_span.style.color = "var(--comment)";
 
-    if (parsed.label)
+    if (parsed.label !== undefined)
         // Add label to output
         div.appendChild(label_span);
-    if (parsed.operation) {
+    if (parsed.operation !== undefined)
         // Add operation to output
         div.appendChild(operation_span);
-        if (parsed.operands)
-            // Add operands after operation
-            div.appendChild(operands_span);
-    }
-    if (parsed.comment)
+    if (parsed.operands !== null)
+        // Add operands after operation
+        div.appendChild(operands_span);
+    if (parsed.comment !== undefined)
         // Add comment to output
         div.appendChild(comment_span);
     output.appendChild(div);
@@ -153,10 +153,10 @@ function run(lines) {
     return new Promise((resolve, reject) => {
         // Parse lines
         let parsed_lines = lines.split("\n").map(parser);
-        console.log("parsed lines:", parsed_lines)
+        console.log("parsed lines:", parsed_lines);
         // Interpret lines
         let interpreted_lines = parsed_lines.map(interpreter);
-        console.log("state:", state)
+        console.log("state:", state);
         // Display lines in output
         interpreted_lines.map(appendCode);
         resolve();
@@ -167,7 +167,7 @@ function insertText(string) {
     const start = source.selectionStart;
     const end = source.selectionEnd;
 
-    // Set textarea value to before+tab+after
+    // Set textarea value to before+inserted+after
     source.value = source.value.substring(0, start) + string
         + source.value.substring(end);
 
@@ -176,11 +176,10 @@ function insertText(string) {
 }
 
 function indent(prepend = "") {
-    let string = prepend;
     // Add tabs if there's a label
     if ((output.innerText + "\n" + source.value).match(label_regex))
-        string += " ".repeat(tab);
-    insertText(string);
+        prepend += "\t";
+    insertText(prepend);
 }
 
 function reset() {
@@ -209,7 +208,7 @@ source.onkeydown = e => {
     else if (e.key === "Tab") {
         // Prevent focus from moving to next element
         e.preventDefault();
-        insertText(" ".repeat(tab));
+        insertText("\t");
     }
 }
 
