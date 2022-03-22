@@ -38,40 +38,42 @@ Here is a `hello, world` example in Bee Assembly:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    data section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-section .data                 ; the section directive is used to define a data
+.section .data                ; the section directive is used to define a data
                               ; section
 
 hello:                        ; the CPU can jump to the hello label in memory
-    .ascii "hello, world\n",  ; the message is a string with a new line
+	.string "hello, world\n", ; the message is a string with a new line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    code section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-section .text                 ; the section directive is used to declare a
+.section .text                ; the section directive is used to declare a
                               ; section of code
 
-global start                  ; the global directive is used to declare a
+.global start                 ; the global directive is used to declare a
                               ; global label
 
 start:                        ; the label for the start of the program
-    mov rax, 1                ; system call for write
-    mov rdi, 1                ; file handle 1 is stdout
-    mov rsi, hello            ; address of string to output
-    mov rdx, 13               ; number of bytes of string
-    syscall                   ; invoke operating system to do the write
-    mov rax, 60               ; system call for exit
-    xor rdi, rdi              ; exit code 0
-    syscall                   ; invoke operating system to exit
+	mov rax, 1                ; system call for write
+	mov rdi, 1                ; file handle 1 is stdout
+	mov rsi, hello            ; address of string to output
+	mov rdx, 13               ; number of bytes of string
+	syscall                   ; invoke operating system to do the write
+	mov rax, 60               ; system call for exit
+	xor rdi, rdi              ; exit code 0
+	syscall                   ; invoke operating system to exit
 ```
 
 ## Syntax
 
 Each line of Bee Assembly will take the following form:
 
-    label: operation operand ; comment
+```
+	label: operation operand ; comment
+```
 
 - A label is a string of characters that starts a line and ends at a colon. (optional)
 
-- An operation is a string of characters that either begins a line or follows a label. (required)
+- An operation is a string of characters that either begins after a tab or label. (required)
 
 - An operand is a string of characters that follow an operation or comma. (optional)
 
@@ -79,10 +81,16 @@ Each line of Bee Assembly will take the following form:
 
 ## Directives
 
-| section | description   | permissions |
-| ------- | ------------- | ----------- |
-| .data   | data          | rw-         |
-| .text   | assembly code | r-x         |
+| directive | description     | usage                  |
+| --------- | --------------- | ---------------------- |
+| .section  | specify block   | `.section .data`       |
+| .data     | data            | read and write         |
+| .text     | assembly code   | read and execute       |
+|           |                 |                        |
+| .global   | global label    | `.global label`        |
+|           |                 |                        |
+| .string   | character array | `.string "characters"` |
+| .bits     | bit array       | `.bits 1010`           |
 
 ## Instructions
 
