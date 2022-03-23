@@ -37,6 +37,11 @@
 Each term (label, operation, operand) must take the form `[^\s:,;]+`. Meaning that terms must not contain spaces, colons, comas, or semicolons.
 
 ```asm
+.directive
+.directive label
+	.directive
+	.directive label
+
 label:operation operand;comment, comment: comment
 label: operation operand,operand ;  comment, :; comment
 label: operation  operand,  operand;
@@ -47,15 +52,14 @@ label: operation;
 label: operation
 label:
 ; comment, : comment
-;comment:, : comment
-    operation operand ; comment, : comment
-    operation operand, operand ; comment, : comment
-    operation operand
-    operation operand, operand
-    operation ; comment, : comment
-    operation ;comment, : comment
-    operation
-
+;.comment:, : comment
+	operation operand ; comment, : comment
+	operation operand, operand ; comment, : comment
+	operation operand
+	operation operand, operand
+	operation ; comment, : comment
+	operation ;comment, : comment
+	operation
 ```
 
 ## The grammar from this example is:
@@ -70,12 +74,14 @@ label:
 
 ## Converting to Regex
 
-1. Labels: `^[^\s:,;]+(?=:)`
+1. Directives: `(?<!;.*)(?<=\.)[^\s:,;]+`
 
-2. Operations: `(?<!;.*)(?<=:\s*|^\s+)[^\s:,;]+`
+2. Labels: `(?<!;.*)(?<=^|\.[^\s.:,;]+\s+)[^\s.:,;]+(?=:|$)`
 
-3. Operands: `(?<!;.*)(?<=([^\s:]+\s+|,))[^\s:,;]+`
+3. Operations: `(?<!;.*)(?<=:\s*|^\s+)[^\s.:,;]+`
 
-4. Comments: `(?<=;).*`
+4. Operands: `(?<!;.*)(?<=([^\s:]+\s+|,))[^\s:,;]+`
+
+5. Comments: `(?<=;).*`
 
 https://github.com/splch/bee-asm/blob/24ce13e56413f8b8525bd588f41800937c23e4c6/docs/script.js#L29-L32

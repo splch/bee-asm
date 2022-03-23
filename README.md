@@ -38,29 +38,30 @@ Here is a `hello, world` example in Bee Assembly:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    data section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.section .data                ; the section directive is used to define a data
-                              ; section
+.data                         ; the data directive defines a data section
 
 hello:                        ; the CPU can jump to the hello label in memory
-	.string "hello, world\n", ; the message is a string with a new line
+	.string "hello, world\n", ; the label points to a string with a new line
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    code section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.section .text                ; the section directive is used to declare a
-                              ; section of code
+.text                         ; the text directive defines where assembly code
+							  ; is run
 
 .global start                 ; the global directive is used to declare a
                               ; global label
 
 start:                        ; the label for the start of the program
-	mov rax, 1                ; system call for write
-	mov rdi, 1                ; file handle 1 is stdout
+	mov rax, 1                ; instruct the system to write
+	mov rdi, 1                ; output to stdout
 	mov rsi, hello            ; address of string to output
-	mov rdx, 13               ; number of bytes of string
-	syscall                   ; invoke operating system to do the write
-	mov rax, 60               ; system call for exit
-	xor rdi, rdi              ; exit code 0
-	syscall                   ; invoke operating system to exit
+	mov rdx, 13               ; number of bytes of the string
+	ecall                     ; call kernel to write string
+
+	mov rax, 60               ; instruct the system to exit
+	mov rdi, 0                ; exit code 0
+	ecall                     ; return 0
 ```
 
 ## Syntax
@@ -68,7 +69,7 @@ start:                        ; the label for the start of the program
 Each line of Bee Assembly will take the following form:
 
 ```
-	label: operation operand ; comment
+label:	operation operand ; comment
 ```
 
 - A label is a string of characters that starts a line and ends at a colon. (optional)
@@ -83,14 +84,13 @@ Each line of Bee Assembly will take the following form:
 
 | directive | description     | usage                  |
 | --------- | --------------- | ---------------------- |
-| .section  | specify block   | `.section .data`       |
-| .data     | data            | read and write         |
-| .text     | assembly code   | read and execute       |
+| `.data`   | data block      | read and write         |
+| `.text`   | assembly block  | read and execute       |
 |           |                 |                        |
-| .global   | global label    | `.global label`        |
+| `.global` | global label    | `.global label`        |
 |           |                 |                        |
-| .string   | character array | `.string "characters"` |
-| .bits     | bit array       | `.bits 1010`           |
+| `.string` | character array | `.string "characters"` |
+| `.bits`   | bit array       | `.bits 1010`           |
 
 ## Instructions
 

@@ -28,8 +28,9 @@ const output = document.getElementsByTagName("pre")[0];
 const run_btn = document.getElementsByTagName("button")[0];
 
 // Lexer
-const label_regex = new RegExp(/^[^\s:,;]+(?=:)/gm);
-const operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)[^\s:,;]+/g);
+const directive_regex = /(?<!;.*)(?<=\.)[^\s:,;]+/g;
+const label_regex = new RegExp(/(?<!;.*)(?<=^|\.[^\s.:,;]+\s+)[^\s.:,;]+(?=:|$)/gm);
+const operation_regex = new RegExp(/(?<!;.*)(?<=:\s*|^\s+)[^\s.:,;]+/g);
 const operand_regex = new RegExp(/(?<!;.*)(?<=([^\s:]+\s+|,))[^\s:,;]+/g);
 const comment_regex = new RegExp(/(?<=;).*/g);
 
@@ -38,12 +39,14 @@ function parser(line) {
     run_btn.innerText = "Parse";
 
     // lex and parse with regex
+    const directive = line.match(directive_regex);
     const label = line.match(label_regex)?.at(0);
     const operation = line.match(operation_regex)?.at(0).toLowerCase();
     const operands = line.match(operand_regex);
     const comment = line.match(comment_regex)?.at(0);
 
     return {
+        directive,
         label,
         operation,
         operands,
@@ -111,28 +114,34 @@ function interpreter(parsed) {
 }
 
 function appendCode(parsed) {
+    const directive = parsed.directive?.join(" .")?.trim();
     const label = parsed.label + ":";
     const operation = "\t" + parsed.operation;
     const operands = " " + parsed.operands?.join(", ");
     const comment = "\t" + parsed.comment;
 
     const div = document.createElement("div");
+    const directive_span = document.createElement("span");
     const label_span = document.createElement("span");
     const operation_span = document.createElement("span");
     const operands_span = document.createElement("span");
     const comment_span = document.createElement("span");
 
+    directive_span.innerText = directive;
     label_span.innerText = label;
     operation_span.innerText = operation;
     operands_span.innerText = operands;
     comment_span.innerText = comment;
 
     // Good on light (#f5f7ff) and dark (#2b2b2b)
+    directive_span.style.color = "var(--directive)";
     label_span.style.color = "var(--label)";
     operation_span.style.color = "var(--operation)";
     operands_span.style.color = "var(--operand)";
     comment_span.style.color = "var(--comment)";
 
+    if (parsed.directive !== null)
+        div.appendChild(directive_span);
     if (parsed.label !== undefined)
         // Add label to output
         div.appendChild(label_span);
