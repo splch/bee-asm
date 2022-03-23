@@ -12,21 +12,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    data section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.section .data                ; the section directive is used to define a data
-                              ; section
+.section .data                    ; the section directive is used to define a
+                                  ; data section
 
-hello:                        ; the CPU can jump to the hello label in memory
+hello:                            ; the CPU can jump to this label in memory
 	.string "hello, world\n", ; the message is a string with a new line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    code section     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.section .text                ; the section directive is used to declare a
-                              ; section of code
+.section .text                    ; the section directive is used to declare a
+                                  ; section of code
 
-.global start                 ; the global directive is used to declare a
-                              ; global label
+.global start                     ; the global directive is used to declare a
+                                  ; global label
 
-start:                        ; the label for the start of the program
+start:                            ; the label for the start of the program
 	mov rax, 1                ; system call for write
 	mov rdi, 1                ; file handle 1 is stdout
 	mov rsi, hello            ; address of string to output
